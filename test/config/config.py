@@ -1,11 +1,14 @@
-#Path's
+import configparser
 
-JSON_FILE_PATH = 'yourfilepath/test/data'
+config = configparser.ConfigParser()
+config.read('config.ini')
+#Path's
+JSON_FILE_PATH = config['DEFAULT']['JSON_FILE_PATH']
 
 # PAGE VALUES FOR SPIDERS : 
 
-BBC_PAGE = 10 #bbcnews.com
-PSYTODAY_PAGE = 10 #psychologytoday.com/us
-LIVESC_PAGE = 0 # livescience.com / be careful with this there is so many links in one page!
-SCIENCENEWS_PAGE = 50 #sciencenews.com / this one may require high number.
-NEUROSCIENCE_PAGE = 10 #neuroscience.com
+BBC_PAGE = config['DEFAULT'].getint('BBC_PAGE') #bbcnews.com
+PSYTODAY_PAGE = config['DEFAULT'].getint('PSYTODAY_PAGE') #psychologytoday.com/us
+LIVESC_PAGE = config['DEFAULT'].getint('LIVESC_PAGE') # livescience.com / be careful with this there is so many links in one page!
+SCIENCENEWS_PAGE = config['DEFAULT'].getint('SCIENCENEWS_PAGE') #sciencenews.com / this one may require high number.
+NEUROSCIENCE_PAGE = config['DEFAULT'].getint('NEUROSCIENCE_PAGE') #neuroscience.com

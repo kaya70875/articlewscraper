@@ -1,5 +1,4 @@
 import re
-from config import config
 
 def create_single_topic(topic, word: str, max_length: int = 100):
     sentences = []
