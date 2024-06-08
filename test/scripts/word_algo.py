@@ -1,7 +1,7 @@
 import re
 from config import config
 
-def create_single_topic(topic, word: str, max_length: int = config.MAX_LENGTH_OF_SENTENCE):
+def create_single_topic(topic, word: str, max_length: int = 100):
     sentences = []
     
     sentences.extend(re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', topic))
@@ -17,7 +17,7 @@ def create_single_topic(topic, word: str, max_length: int = config.MAX_LENGTH_OF
     
     return keyword_sentences
 
-def create_topics(topics: list, word: str, max_length: int = config.MAX_LENGTH_OF_SENTENCE):
+def create_topics(topics: list, word: str, max_length: int = 100):
     sentences = []
     
     for topic in topics:
