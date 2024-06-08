@@ -1,6 +1,6 @@
 #Path's
 
-JSON_FILE_PATH = 'C:/Users/ahmet/OneDrive/Desktop/learnwitharticles/test/data'
+JSON_FILE_PATH = 'yourfilepath/test/data'
 
 # PAGE VALUES FOR SPIDERS : 
 
