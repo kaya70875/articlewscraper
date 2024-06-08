@@ -15,7 +15,7 @@ def update_database():
 def main():
     parser = argparse.ArgumentParser(description="Generate sentences from web sources.")
     parser.add_argument('-u', '--update', action='store_true', help="Update the database by fetching websites.")
-    parser.add_argument('-s', '--sources', nargs='+', choices=['science', 'news', 'psy'], required=True, help="Sources to create sentences from (choose from: science, news, psy).")
+    parser.add_argument('-s', '--sources', nargs='+', choices=['science', 'news', 'psy'], required=True, help="Sources to create sentences from (choose from: science, news, psy(psychology)).")
     parser.add_argument('-l', '--length', type=int, default=100, help="Maximum length of the sentences.")
     parser.add_argument('-w', '--word', required=True, help="Word to search for in the sentences.")
 
