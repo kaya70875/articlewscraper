@@ -12,7 +12,8 @@ class CrawlScienceNews(scrapy.Spider):
 
     custom_settings= {
             'FEEDS' : {'data/science/scienceNews.json' : {'format' : 'json',
-                                                  'overwrite' : True}}
+                                                  'overwrite' : True}},
+        'LOG_LEVEL':'CRITICAL',
         }
 
     def parse(self, response):
@@ -48,7 +49,8 @@ class CrawlLiveScience(scrapy.Spider):
                 'format': 'json',
                 'overwrite': True,
             }
-        }
+        },
+        'LOG_LEVEL':'CRITICAL',
     }
 
     def parse(self, response):
@@ -79,3 +81,4 @@ process = CrawlerProcess()
 
 process.crawl(CrawlScienceNews)
 process.crawl(CrawlLiveScience)
+

@@ -10,7 +10,6 @@ def update():
     scienceSpider.process.start()
     newsSpider.process.start()
     psySpider.process.start()
-
 if __name__ == '__main__':
     update()
     print(Fore.RED + 'Database updated sucsessfully!' + Style.RESET_ALL)

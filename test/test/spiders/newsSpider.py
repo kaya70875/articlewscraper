@@ -1,6 +1,7 @@
 import scrapy
 import json
 from scrapy.crawler import CrawlerProcess
+from twisted.internet.error import ReactorNotRestartable
 
 from config import config
 
@@ -18,6 +19,7 @@ class BBCNews(scrapy.Spider):
                 'format': 'json',
                 'overwrite': True
             }
+        
         }
     }
 
@@ -52,3 +54,4 @@ class BBCNews(scrapy.Spider):
 
 process = CrawlerProcess()
 process.crawl(BBCNews)
+
