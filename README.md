@@ -20,8 +20,6 @@ This project helps to understand english words better for creating sentences fro
 
     Install dependencies:
 
-    bash
-
     pip install -r requirements.txt
 
 Usage
@@ -32,14 +30,14 @@ Usage
     Data Collection:
         Run the spiders to collect data from configured websites:
 
-        You must use -u parameter for first time running.
+        You must update database first using 'python update.py'
 
         Crawled files stored inside data folder as .json file.
 
     Example Usage :
-        main.py -h for help
-        main.py -u -s news -l 100 -w make
-        main.py -s news science -l 200 -w make
+        'python update.py' for update database.
+        main.py -s news science -l 100 -w make
+    Example Usage 2 :
+        main.py -s all -l 100 -w prevent
 
-    Above code updates the database and create sentences about 'make' from news related articles max 100 length of word.
-    For the second time You don't have to update database.
+    Above code create sentences about 'make' from news related articles max 100 length of word.
