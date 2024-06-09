@@ -15,7 +15,7 @@ This project helps to understand english words better for creating sentences fro
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your_username/your_project.git
+   git clone https://github.com/kaya70875/LearnWithArticles.git
    cd LearnWithArticles
 
     Install dependencies:
