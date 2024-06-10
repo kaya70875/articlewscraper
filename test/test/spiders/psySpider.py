@@ -1,7 +1,5 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
-from twisted.internet.error import ReactorNotRestartable
-
 from config import config
 
 class CrawlPsyh(scrapy.Spider): #psychologytoday
@@ -21,9 +19,7 @@ class CrawlPsyh(scrapy.Spider): #psychologytoday
     }
 
     def parse(self, response):
-        self.page += 1
-
-        if self.page > config.PSYTODAY_PAGE:
+        if self.page >= config.PSYTODAY_PAGE:
             self.crawler.engine.close_spider(self , 'Reached max. page count!')
 
         links = response.css('h2.teaser-lg__title a::attr(href)').getall()
@@ -33,6 +29,7 @@ class CrawlPsyh(scrapy.Spider): #psychologytoday
         
 
         next_page = response.css('a[rel="next"]::attr(href)').get()
+        self.page += 1
         if next_page:
             next_page_url = response.urljoin(next_page)
             yield scrapy.Request(next_page_url, callback=self.parse)
@@ -61,9 +58,7 @@ class CrawlNeuroSc(scrapy.Spider):
     }
 
     def parse(self, response):
-        self.page += 1
-
-        if self.page > config.NEUROSCIENCE_PAGE:
+        if self.page >= config.NEUROSCIENCE_PAGE:
             self.crawler.engine.close_spider(self , 'Reached max. page count!')
         
         links = response.css('div.title-wrap a::attr(href)').getall()
@@ -73,6 +68,7 @@ class CrawlNeuroSc(scrapy.Spider):
             yield scrapy.Request(next_url , callback=self.parse_article)
         
         next_page = response.css('a.next.page-numbers::attr(href)').get()
+        self.page += 1
         if next_page:
             next_page_url = response.urljoin(next_page)
             yield scrapy.Request(next_page_url , callback=self.parse)

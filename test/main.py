@@ -2,6 +2,8 @@ import argparse
 from data import refactor
 from scripts import word_algo
 
+# ERROR YAKALAMAK İÇİN SPİDERLARI UPDATE DOSYASINDAN CRAWL VE RUN YAPMAMIZ GEREKİYOR ONU YAPMAYA ÇALIŞ İLK HEDEFİMİZ REACTORNOTRESTARTBLE HATASINI YAKALAMAK.
+
 def main():
     parser = argparse.ArgumentParser(description="Generate sentences from web sources.")
     parser.add_argument('-s', '--sources', nargs='+', choices=['science', 'news', 'psy' , 'all'], required=True, help="Sources to create sentences from (choose from: science, news, psy[psychology] , all).")

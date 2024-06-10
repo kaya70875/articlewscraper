@@ -17,8 +17,8 @@ class CrawlScienceNews(scrapy.Spider):
         }
 
     def parse(self, response):
-        self.page +=1
-        if self.page > config.SCIENCENEWS_PAGE:
+    
+        if self.page >= config.SCIENCENEWS_PAGE:
             self.crawler.engine.close_spider(self, 'Reached max. page count!')
         links = response.css('h3.post-item-river__title___vyz1w a::attr(href)').getall()
         
@@ -27,10 +27,11 @@ class CrawlScienceNews(scrapy.Spider):
             yield scrapy.Request(next_url, callback=self.parse_article)
 
         next_page = response.css('a.next.page-numbers::attr(href)').get()
+        self.page+=1
         if next_page:
             next_page_url = response.urljoin(next_page)
             yield scrapy.Request(next_page_url, callback=self.parse)
-
+        
     def parse_article(self , response):
         body = response.css('div.rich-text.rich-text--with-sidebar.single__rich-text___RmCDp p::text').getall()
         for text in body:
@@ -54,8 +55,7 @@ class CrawlLiveScience(scrapy.Spider):
     }
 
     def parse(self, response):
-        self.page += 1
-        if self.page > config.LIVESC_PAGE:
+        if self.page >= config.LIVESC_PAGE:
             self.crawler.engine.close_spider(self, 'Reached max. page count!')
 
         links = response.css('li.day-article a::attr(href)').getall()
@@ -63,12 +63,14 @@ class CrawlLiveScience(scrapy.Spider):
         for link in links:
             next_url = response.urljoin(link)
             yield scrapy.Request(next_url, callback=self.parse_article)
+        
+        self.page+=1
 
         if self.page < config.LIVESC_PAGE:
             self.date = self.date.replace(day=1) - datetime.timedelta(days=1)
             next_page_url = f'https://www.livescience.com/archive/{self.date.year}/{self.date.month:02d}'
             yield scrapy.Request(next_page_url, callback=self.parse)
-
+        
     def parse_article(self, response):
         body = response.css('div.text-copy.bodyCopy.auto p::text').getall()
         for text in body:
@@ -78,7 +80,5 @@ class CrawlLiveScience(scrapy.Spider):
 
 
 process = CrawlerProcess()
-
 process.crawl(CrawlScienceNews)
 process.crawl(CrawlLiveScience)
-

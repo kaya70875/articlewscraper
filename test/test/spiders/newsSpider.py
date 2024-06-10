@@ -1,7 +1,6 @@
 import scrapy
 import json
 from scrapy.crawler import CrawlerProcess
-from twisted.internet.error import ReactorNotRestartable
 
 from config import config
 
@@ -41,8 +40,7 @@ class BBCNews(scrapy.Spider):
 
         next_page = current_page + 1
         next_page_url = f'{base_url}?country=tr&page={next_page}&size=9'
-        
-        if next_page < config.BBC_PAGE:
+        if next_page_url:
             yield scrapy.Request(next_page_url, callback=self.parse, meta={'page': next_page, 'base_url': base_url})
 
     def parse_article(self, response):
