@@ -19,6 +19,10 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 200,
 }
 
+ITEM_PIPELINES = {
+    'test.pipelines.MongoPipeline': 800,
+}
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "test (+http://www.yourdomain.com)"
 
@@ -27,6 +31,9 @@ ROBOTSTXT_OBEY = True
 
 COOKIES_ENABLED = True
 COOKIES_DEBUG = True
+
+MONGO_URI = 'mongodb+srv://kaya70875:PqVLhzC3Txm6ZJpD@mern.8pqqmzg.mongodb.net/?retryWrites=true&w=majority&appName=mern'
+MONGO_DATABASE = 'learn-with-articles'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -67,12 +74,6 @@ COOKIES_DEBUG = True
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
 #    "scrapy.extensions.telnet.TelnetConsole": None,
-#}
-
-# Configure item pipelines
-# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "test.pipelines.TestPipeline": 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
