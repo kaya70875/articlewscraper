@@ -1,6 +1,6 @@
 from test.spiders import scienceSpider, newsSpider, psySpider
 from scrapy.utils.project import get_project_settings
-from scrapy.crawler import CrawlerProcess , CrawlerRunner
+from scrapy.crawler import CrawlerRunner
 import logging
 from colorama import Fore, Style, init
 
@@ -12,8 +12,12 @@ def update():
 
     settings = get_project_settings()
     runner = CrawlerRunner(settings)
+
     runner.crawl(scienceSpider.CrawlLiveScience)
     runner.crawl(scienceSpider.CrawlScienceNews)
+    runner.crawl(newsSpider.BBCNews)
+    runner.crawl(psySpider.CrawlNeuroSc)
+
     d = runner.join()
 
     from twisted.internet import reactor
