@@ -1,22 +1,13 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from config import config
+import datetime
 
 class CrawlPsyh(scrapy.Spider): #psychologytoday
     name = 'crawlpsyh'
     allowed_domains = ['psychologytoday.com']
     start_urls = ['https://www.psychologytoday.com/us/']
     page = 0
-
-    custom_settings = {
-        'FEEDS': {
-            'data/psy/psyToday.json': {
-                'format': 'json',
-                'overwrite': True
-            }
-        },
-        'LOG_LEVEL':'CRITICAL',
-    }
 
     def parse(self, response):
         if self.page >= config.PSYTODAY_PAGE:
@@ -39,23 +30,17 @@ class CrawlPsyh(scrapy.Spider): #psychologytoday
         all_text = body.css('p::text').getall()
         for text in all_text:
             yield{
-                'text' : text
+                'text' : text,
+                'source' : response.url,
+                'category' : 'psychology',
+                'length' : len(text),
+                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
             }
 
 class CrawlNeuroSc(scrapy.Spider):
     name = 'crawlneuroScience'
     start_urls = ['https://neurosciencenews.com/neuroscience-topics/psychology/']
     page = 0
-
-    custom_settings = {
-        'FEEDS': {
-            'data/psy/neuroScience.json': {
-                'format': 'json',
-                'overwrite': True
-            }
-        },
-        'LOG_LEVEL':'CRITICAL',
-    }
 
     def parse(self, response):
         if self.page >= config.NEUROSCIENCE_PAGE:
@@ -77,7 +62,11 @@ class CrawlNeuroSc(scrapy.Spider):
         body = response.css('div.entry-content.body-color.clearfix.link-color-wrap p::text').getall()
         for text in body:
             yield{
-                'text' : text
+                'text' : text,
+                'source' : response.url,
+                'category' : 'psychology',
+                'length' : len(text),
+                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
             }
 
 

@@ -3,6 +3,7 @@ import json
 from scrapy.crawler import CrawlerProcess
 
 from config import config
+import datetime
 
 class BBCNews(scrapy.Spider):
     name = 'crawlbbcNews'
@@ -11,16 +12,6 @@ class BBCNews(scrapy.Spider):
         'https://web-cdn.api.bbci.co.uk/xd/content-collection/e2cc1064-8367-4b1e-9fb7-aed170edc48f?country=tr&page=0&size=9',
         'https://web-cdn.api.bbci.co.uk/xd/content-collection/db5543a3-7985-4b9e-8fe0-2ac6470ea45b?country=tr&page=0&size=9'
     ]
-
-    custom_settings = {
-        'FEEDS': {
-            'data/news/bbcNews.json': {
-                'format': 'json',
-                'overwrite': True
-            }
-        
-        }
-    }
 
     def start_requests(self):
         for url in self.start_urls:
@@ -47,7 +38,11 @@ class BBCNews(scrapy.Spider):
         body = response.css('p::text').getall()
         for text in body:
             yield {
-                'text': text
+                'text': text,
+                'source' : response.url,
+                'category' : 'news',
+                'length' : len(text),
+                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
             }
 
 process = CrawlerProcess()

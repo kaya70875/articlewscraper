@@ -10,12 +10,6 @@ class CrawlScienceNews(scrapy.Spider):
     start_urls = ['https://www.sciencenews.org/all-stories/']
     page = 0
 
-    custom_settings= {
-            'FEEDS' : {'data/science/scienceNews.json' : {'format' : 'json',
-                                                  'overwrite' : True}},
-        'LOG_LEVEL':'CRITICAL',
-        }
-
     def parse(self, response):
     
         if self.page >= config.SCIENCENEWS_PAGE:
@@ -36,7 +30,11 @@ class CrawlScienceNews(scrapy.Spider):
         body = response.css('div.rich-text.rich-text--with-sidebar.single__rich-text___RmCDp p::text').getall()
         for text in body:
             yield{
-                'text' : text
+                'text' : text,
+                'source' : response.url,
+                'category' : 'science',
+                'length' : len(text),
+                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
             }
 
 class CrawlLiveScience(scrapy.Spider):
@@ -44,15 +42,6 @@ class CrawlLiveScience(scrapy.Spider):
     date = datetime.datetime.now()
     start_urls = [f'https://www.livescience.com/archive/{date.year}/{date.month:02d}']
     page = 0
-    custom_settings = {
-        'FEEDS': {
-            'data/science/liveScience.json': {
-                'format': 'json',
-                'overwrite': True,
-            }
-        },
-        'LOG_LEVEL':'CRITICAL',
-    }
 
     def parse(self, response):
         if self.page >= config.LIVESC_PAGE:
@@ -75,7 +64,11 @@ class CrawlLiveScience(scrapy.Spider):
         body = response.css('div.text-copy.bodyCopy.auto p::text').getall()
         for text in body:
             yield {
-                'text': text
+                'text': text,
+                'source' : response.url,
+                'category' : 'science',
+                'length' : len(text),
+                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
             }
 
 
