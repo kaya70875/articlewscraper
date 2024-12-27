@@ -1,7 +1,6 @@
 import scrapy
 import json
-from scrapy.crawler import CrawlerProcess
-
+import logging
 from config import config
 import datetime
 
@@ -13,6 +12,10 @@ class BBCNews(scrapy.Spider):
         'https://web-cdn.api.bbci.co.uk/xd/content-collection/db5543a3-7985-4b9e-8fe0-2ac6470ea45b?country=tr&page=0&size=9'
     ]
 
+    custom_settings = {
+        'ROBOTSTXT_OBEY': False,
+    }
+
     def start_requests(self):
         for url in self.start_urls:
             yield scrapy.Request(url, callback=self.parse, meta={'page': 0, 'base_url': url.split('?')[0]})
@@ -21,10 +24,17 @@ class BBCNews(scrapy.Spider):
         current_page = response.meta['page']
         base_url = response.meta['base_url']
 
+        logging.info(f'Parsing page {current_page} of {base_url}')
+
         if current_page >= config.BBC_PAGE:
+            logging.info('Reached max. page count!')
             self.crawler.engine.close_spider(self, 'Reached max. page count!')
 
         data = json.loads(response.text)
+        if 'data' not in data:
+            logging.error('No data found in response')
+            return
+
         for item in data['data']:
             next_url = f'https://www.bbc.com{item["path"]}'
             yield scrapy.Request(next_url, callback=self.parse_article)
@@ -36,15 +46,15 @@ class BBCNews(scrapy.Spider):
 
     def parse_article(self, response):
         body = response.css('p::text').getall()
+        if not body:
+            logging.error(f'No text found in article: {response.url}')
+            return
+
         for text in body:
             yield {
                 'text': text,
-                'source' : response.url,
-                'category' : 'news',
-                'length' : len(text),
-                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
+                'source': response.url,
+                'category': 'news',
+                'length': len(text),
+                'date': datetime.datetime.now().strftime('%Y-%m-%d')
             }
-
-process = CrawlerProcess()
-process.crawl(BBCNews)
-

@@ -68,9 +68,3 @@ class CrawlNeuroSc(scrapy.Spider):
                 'length' : len(text),
                 'date' : datetime.datetime.now().strftime('%Y-%m-%d')
             }
-
-
-process = CrawlerProcess()
-
-process.crawl(CrawlPsyh)
-process.crawl(CrawlNeuroSc)
