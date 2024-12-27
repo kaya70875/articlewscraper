@@ -12,7 +12,7 @@ BOT_NAME = "test"
 SPIDER_MODULES = ["test.spiders"]
 NEWSPIDER_MODULE = "test.spiders"
 
-DOWNLOAD_DELAY = 2
+DOWNLOAD_DELAY = 1
 
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,

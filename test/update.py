@@ -17,6 +17,8 @@ def update(batch_size=100):
 
     settings = get_project_settings()
     settings.set('BATCH_SIZE', batch_size)
+    settings.set('CONCURRENT_REQUESTS' , 32)
+    settings.set('DOWNLOAD_DELAY' , 0.5)
     runner = CrawlerRunner(settings)
 
     runner.crawl(newsSpider.BBCNews)
