@@ -9,9 +9,11 @@ from itemadapter import ItemAdapter
 import pymongo
 
 class MongoPipeline:
-    def __init__(self, mongo_uri, mongo_db):
+    def __init__(self, mongo_uri, mongo_db , batch_size=100):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
+        self.batch_size = batch_size
+        self.items = []
     
     @classmethod
     def from_crawler(cls , crawler):
@@ -24,9 +26,14 @@ class MongoPipeline:
         self.db = self.client[self.mongo_db]
 
     def close_spider(self, spider):
+        if self.items:
+            self.db['sentences'].insert_many(self.items)
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db['sentences'].insert_one(ItemAdapter(item).asdict())
+        self.items.append(ItemAdapter(item).asdict())
+        if len(self.items) >= self.batch_size:
+            self.db['sentences'].insert_many(self.items)
+            self.items = []
         return item
 
