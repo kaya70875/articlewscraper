@@ -14,7 +14,8 @@ class MongoPipeline:
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DATABASE')
+            mongo_db=crawler.settings.get('MONGO_DATABASE'),
+            batch_size=crawler.settings.getint('BATCH_SIZE', 100)
         )
 
     def open_spider(self, spider):
