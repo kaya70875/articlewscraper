@@ -13,9 +13,9 @@ def update():
     settings = get_project_settings()
     runner = CrawlerRunner(settings)
 
+    runner.crawl(newsSpider.BBCNews)
     runner.crawl(scienceSpider.CrawlLiveScience)
     runner.crawl(scienceSpider.CrawlScienceNews)
-    runner.crawl(newsSpider.BBCNews)
     runner.crawl(psySpider.CrawlNeuroSc)
 
     d = runner.join()

@@ -2,9 +2,6 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-#Path's
-JSON_FILE_PATH = config['DEFAULT']['JSON_FILE_PATH']
-
 # PAGE VALUES FOR SPIDERS : 
 
 BBC_PAGE = config['DEFAULT'].getint('BBC_PAGE') #bbcnews.com
