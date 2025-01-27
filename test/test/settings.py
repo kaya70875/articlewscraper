@@ -9,7 +9,7 @@
 
 BOT_NAME = "test"
 
-SPIDER_MODULES = ["test.spiders"]
+SPIDER_MODULES = ["test.spiders", "test.spiders.encyclopedias"]
 NEWSPIDER_MODULE = "test.spiders"
 
 DOWNLOAD_DELAY = 1
