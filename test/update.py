@@ -1,4 +1,5 @@
 from test.spiders import scienceSpider, newsSpider, psySpider
+from test.spiders.encyclopedias import spider
 from scrapy.utils.project import get_project_settings
 from scrapy.crawler import CrawlerRunner
 import logging
@@ -25,6 +26,7 @@ def update(batch_size=100):
     runner.crawl(scienceSpider.CrawlLiveScience)
     runner.crawl(scienceSpider.CrawlScienceNews)
     runner.crawl(psySpider.CrawlNeuroSc)
+    runner.crawl(spider.WikipediaSpider)
 
     d = runner.join()
 
