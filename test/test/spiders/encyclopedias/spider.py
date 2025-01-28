@@ -2,6 +2,9 @@ import scrapy
 import datetime
 from scripts.helpers import split_into_sentences
 import json
+import re
+from config import config
+import requests
 
 def get_subjects():
 
@@ -39,6 +42,14 @@ def get_subjects():
 
     return urls
 
+def create_start_urls(count : int):
+    url = []
+
+    for _ in range(count):
+        r = requests.get("https://www.wikihow.com/Special:Randomizer")
+        url.append(r.url)
+    return url
+
 class WikipediaSpider(scrapy.Spider):
     name = 'wikipedia'
 
@@ -69,3 +80,33 @@ class WikipediaSpider(scrapy.Spider):
                     'length': len(sentence),
                     'date': datetime.datetime.now().strftime('%Y-%m-%d')
                 }
+
+class WikiHowSpider(scrapy.Spider):
+    name = 'wikihow'
+
+    custom_settings = {
+        'ROBOTSTXT_OBEY': False,
+    }
+
+    def start_requests(self):
+
+        urls = create_start_urls(100)
+        for url in urls:
+            yield scrapy.Request(url, callback=self.parse)
+        
+    def parse(self, response):
+        content = response.css('.step::text').getall()
+        
+        # Join the content and clean up extra whitespace and newlines
+        cleaned_content = " ".join(content).strip()
+        cleaned_content = re.sub(r'\s+', ' ', cleaned_content)
+
+        sentences = split_into_sentences(cleaned_content)
+        for sentence in sentences:
+            yield {
+                'text': sentence,
+                'source': response.url,
+                'category': 'encyclopedia',
+                'length': len(sentence),
+                'date': datetime.datetime.now().strftime('%Y-%m-%d')
+            }
