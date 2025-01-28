@@ -9,3 +9,4 @@ PSYTODAY_PAGE = config['DEFAULT'].getint('PSYTODAY_PAGE') #psychologytoday.com/u
 LIVESC_PAGE = config['DEFAULT'].getint('LIVESC_PAGE') # livescience.com / be careful with this there is so many links in one page!
 SCIENCENEWS_PAGE = config['DEFAULT'].getint('SCIENCENEWS_PAGE') #sciencenews.com / this one may require high number.
 NEUROSCIENCE_PAGE = config['DEFAULT'].getint('NEUROSCIENCE_PAGE') #neuroscience.com
+WIKIHOW_PAGE = config['DEFAULT'].getint('WIKIHOW_PAGE') #wikihow.com
