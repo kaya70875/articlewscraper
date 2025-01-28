@@ -5,7 +5,7 @@ from scrapy.crawler import CrawlerRunner
 import logging
 from colorama import Fore, Style, init
 import time
-from config.config import BBC_PAGE, PSYTODAY_PAGE, LIVESC_PAGE, SCIENCENEWS_PAGE, NEUROSCIENCE_PAGE
+from config.config import BBC_PAGE, PSYTODAY_PAGE, LIVESC_PAGE, SCIENCENEWS_PAGE, NEUROSCIENCE_PAGE, WIKIHOW_PAGE
 import argparse
 
 logging.getLogger('scrapy').propagate = False
@@ -26,7 +26,8 @@ def update(batch_size=100):
     runner.crawl(scienceSpider.CrawlLiveScience)
     runner.crawl(scienceSpider.CrawlScienceNews)
     runner.crawl(psySpider.CrawlNeuroSc)
-    runner.crawl(spider.WikipediaSpider)
+    #runner.crawl(spider.WikipediaSpider)
+    runner.crawl(spider.WikiHowSpider)
 
     d = runner.join()
 
@@ -38,7 +39,7 @@ def update(batch_size=100):
     end_time = time.time()
     duration = end_time - start_time
 
-    total_pages = sum([BBC_PAGE, PSYTODAY_PAGE, LIVESC_PAGE, SCIENCENEWS_PAGE, NEUROSCIENCE_PAGE])
+    total_pages = sum([BBC_PAGE, PSYTODAY_PAGE, LIVESC_PAGE, SCIENCENEWS_PAGE, NEUROSCIENCE_PAGE, WIKIHOW_PAGE])
 
     print(Fore.BLUE + f'Database updated successfully in {duration:.2f} seconds!' + Style.RESET_ALL)
     print(Fore.BLUE + f'Total of {total_pages} pages scraped!' + Style.RESET_ALL)
