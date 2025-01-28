@@ -1,6 +1,6 @@
 import re
 
-def split_into_sentences(text):
+def split_into_sentences(text : str):
     # Remove === signs
     text = re.sub(r'===\s*[^=]+\s*===', '', text)
     # Improved regex pattern to split text into sentences
