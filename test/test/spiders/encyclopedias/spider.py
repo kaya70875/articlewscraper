@@ -3,8 +3,8 @@ import datetime
 from scripts.helpers import split_into_sentences
 import json
 import re
-from config import config
 import requests
+from config import config
 
 def get_subjects():
 
@@ -90,7 +90,7 @@ class WikiHowSpider(scrapy.Spider):
 
     def start_requests(self):
 
-        urls = create_start_urls(100)
+        urls = create_start_urls(20)
         for url in urls:
             yield scrapy.Request(url, callback=self.parse)
         
