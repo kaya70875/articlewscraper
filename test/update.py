@@ -5,7 +5,7 @@ from scrapy.crawler import CrawlerRunner
 import logging
 from colorama import Fore, Style, init
 import time
-from config.config import BBC_PAGE, PSYTODAY_PAGE, LIVESC_PAGE, SCIENCENEWS_PAGE, NEUROSCIENCE_PAGE, WIKIHOW_PAGE
+from config.config import *
 import argparse
 
 logging.getLogger('scrapy').propagate = False
