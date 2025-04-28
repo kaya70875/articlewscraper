@@ -35,6 +35,8 @@ COOKIES_DEBUG = True
 MONGO_URI = 'mongodb+srv://kaya70875:PqVLhzC3Txm6ZJpD@mern.8pqqmzg.mongodb.net/?retryWrites=true&w=majority&appName=mern'
 MONGO_DATABASE = 'learn-with-articles'
 
+DOWNLOAD_FAIL_ON_DATALOSS = False
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
