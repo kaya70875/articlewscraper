@@ -90,7 +90,7 @@ class WikiHowSpider(scrapy.Spider):
 
     def start_requests(self):
 
-        urls = create_start_urls(20)
+        urls = create_start_urls(config.WIKIHOW_PAGE)
         for url in urls:
             yield scrapy.Request(url, callback=self.parse)
         
