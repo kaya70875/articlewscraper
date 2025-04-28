@@ -11,7 +11,7 @@ import argparse
 logging.getLogger('scrapy').propagate = False
 init()
 
-def update(batch_size=100):
+def update(batch_size=1000):
     try:
         print(Fore.GREEN + 'Fetching websites... This could take about 2-15 minutes based on the number of pages being fetched.' + Style.RESET_ALL)
 
@@ -19,15 +19,15 @@ def update(batch_size=100):
 
         settings = get_project_settings()
         settings.set('BATCH_SIZE', batch_size)
-        settings.set('CONCURRENT_REQUESTS' , 32)
-        settings.set('DOWNLOAD_DELAY' , 0.5)
+        settings.set('CONCURRENT_REQUESTS' , 16)
+        settings.set('DOWNLOAD_DELAY' , 0.1)
         runner = CrawlerRunner(settings)
 
         runner.crawl(newsSpider.BBCNews)
         runner.crawl(scienceSpider.CrawlLiveScience)
         runner.crawl(scienceSpider.CrawlScienceNews)
         runner.crawl(psySpider.CrawlNeuroSc)
-        #runner.crawl(spider.WikipediaSpider)
+        runner.crawl(spider.WikipediaSpider)
         runner.crawl(spider.WikiHowSpider)
 
         d = runner.join()
@@ -51,6 +51,6 @@ def update(batch_size=100):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Update the database with new pages.')
-    parser.add_argument('-b' , '--batch_size', type=int, default=100, required=False, help='Number of pages to fetch per batch.')
+    parser.add_argument('-b' , '--batch_size', type=int, default=1000, required=False, help='Number of pages to fetch per batch.')
     args = parser.parse_args()
     update(args.batch_size)

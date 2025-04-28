@@ -5,7 +5,7 @@ import logging
 import pymongo.errors
 
 class MongoPipeline:
-    def __init__(self, mongo_uri, mongo_db, batch_size=100):
+    def __init__(self, mongo_uri, mongo_db, batch_size=1000):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
         self.batch_size = batch_size
@@ -17,7 +17,7 @@ class MongoPipeline:
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
             mongo_db=crawler.settings.get('MONGO_DATABASE'),
-            batch_size=crawler.settings.getint('BATCH_SIZE', 100)
+            batch_size=crawler.settings.getint('BATCH_SIZE', 1000)
         )
 
     def open_spider(self, spider):
