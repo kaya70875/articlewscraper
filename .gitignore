@@ -1,5 +1,4 @@
 *.pyc
 venv/
 data
-config.ini
 notes.txt
