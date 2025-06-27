@@ -17,8 +17,6 @@ This microservice is responsible for crawling articles from various sources (e.g
 - **Scrapy** – For fast and flexible web crawling
 - **MongoDB** – Stores parsed sentence-level data
 - **Python 3.10+**
-- **Docker** (optional) – For containerized deployment
-
 ---
 
 ## ⚙️ How It Works
