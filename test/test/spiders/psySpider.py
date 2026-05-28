@@ -1,70 +1,35 @@
-import scrapy
-from scrapy.crawler import CrawlerProcess
-from config import config
-import datetime
+from .base import BaseArticleSpider
 
-class CrawlPsyh(scrapy.Spider): #psychologytoday
+class CrawlPsyh(BaseArticleSpider): #psychologytoday
     name = 'crawlpsyh'
     allowed_domains = ['psychologytoday.com']
     start_urls = ['https://www.psychologytoday.com/us/']
-    page = 0
+
+    page_limit_key = "PSYTODAY_PAGE"
+    link_selector = 'h2.teaser-lg__title a::attr(href)'
+    next_page_selector = 'a[rel="next"]::attr(href)'
+    article_selector = 'div.field-name-body p'
+    category = "psychology"
 
     def parse(self, response):
-        if self.page >= config.PSYTODAY_PAGE:
-            self.crawler.engine.close_spider(self , 'Reached max. page count!')
-
-        links = response.css('h2.teaser-lg__title a::attr(href)').getall()
-        for link in links:
-            next_url = response.urljoin(link)
-            yield scrapy.Request(next_url, callback=self.parse_article)
-        
-
-        next_page = response.css('a[rel="next"]::attr(href)').get()
-        self.page += 1
-        if next_page:
-            next_page_url = response.urljoin(next_page)
-            yield scrapy.Request(next_page_url, callback=self.parse)
+        yield from self.setup_parse(response)
             
     def parse_article(self, response):
-        body = response.css('div.field-name-body')
-        all_text = body.css('p::text').getall()
-        for text in all_text:
-            yield{
-                'text' : text,
-                'source' : response.url,
-                'category' : 'psychology',
-                'length' : len(text),
-                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
-            }
+        yield from self.extract_article_sentences(response)
 
-class CrawlNeuroSc(scrapy.Spider):
+class CrawlNeuroSc(BaseArticleSpider):
     name = 'crawlneuroScience'
+    allowed_domains = ['neurosciencenews.com']
     start_urls = ['https://neurosciencenews.com/neuroscience-topics/psychology/']
-    page = 0
 
+    page_limit_key = "NEUROSCIENCE_PAGE"
+    link_selector = 'div.title-wrap a::attr(href)'
+    article_selector = 'div.entry-content.body-color.clearfix.link-color-wrap p'
+    next_page_selector = 'a.next.page-numbers::attr(href)'
+    category = "psychology"
+    
     def parse(self, response):
-        if self.page >= config.NEUROSCIENCE_PAGE:
-            self.crawler.engine.close_spider(self , 'Reached max. page count!')
-        
-        links = response.css('div.title-wrap a::attr(href)').getall()
-
-        for link in links:
-            next_url = response.urljoin(link)
-            yield scrapy.Request(next_url , callback=self.parse_article)
-        
-        next_page = response.css('a.next.page-numbers::attr(href)').get()
-        self.page += 1
-        if next_page:
-            next_page_url = response.urljoin(next_page)
-            yield scrapy.Request(next_page_url , callback=self.parse)
+        yield from self.setup_parse(response)
     
     def parse_article(self , response):
-        body = response.css('div.entry-content.body-color.clearfix.link-color-wrap p::text').getall()
-        for text in body:
-            yield{
-                'text' : text,
-                'source' : response.url,
-                'category' : 'psychology',
-                'length' : len(text),
-                'date' : datetime.datetime.now().strftime('%Y-%m-%d')
-            }
+        yield from self.extract_article_sentences(response)
