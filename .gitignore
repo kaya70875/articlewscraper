@@ -1,4 +1,4 @@
 *.pyc
-venv/
+.venv/
 data
 notes.txt
