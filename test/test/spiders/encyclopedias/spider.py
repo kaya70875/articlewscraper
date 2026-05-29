@@ -72,9 +72,11 @@ class WikipediaSpider(scrapy.Spider):
         
             sentences = split_into_sentences(content)
 
-            for sentence in sentences:
+            for i, sentence in enumerate(sentences):
                 yield {
                     'text': sentence,
+                    'prev_sentence': sentences[i - 1] if i > 0 else "",
+                    'next_sentence': sentences[i + 1] if i < len(sentences) - 1 else "",
                     'source': article_url,
                     'category': 'encyclopedia',
                     'length': len(sentence),
@@ -102,9 +104,11 @@ class WikiHowSpider(scrapy.Spider):
         cleaned_content = re.sub(r'\s+', ' ', cleaned_content)
 
         sentences = split_into_sentences(cleaned_content)
-        for sentence in sentences:
+        for i, sentence in enumerate(sentences):
             yield {
                 'text': sentence,
+                'prev_sentence': sentences[i - 1] if i > 0 else "",
+                'next_sentence': sentences[i + 1] if i < len(sentences) - 1 else "",
                 'source': response.url,
                 'category': 'encyclopedia',
                 'length': len(sentence),
