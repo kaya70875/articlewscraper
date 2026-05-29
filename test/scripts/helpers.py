@@ -1,14 +1,24 @@
 import re
 
-def split_into_sentences(text : str):
-    # Remove === signs
-    text = re.sub(r'===\s*[^=]+\s*===', '', text)
-    # Improved regex pattern to split text into sentences
-    sentence_endings = re.compile(r'(?<!\b\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s+(?=[A-Z])')
-    sentences = sentence_endings.split(text.strip())
-    return sentences
+def split_into_sentences(text: str):
+    if not text:
+        return []
 
-# helpers.py
+    text = re.sub(r'===\s*[^=]+\s*===', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+
+    sentence_endings = re.compile(
+        r'(?<!\b\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s+(?=[A-Z])'
+    )
+
+    sentences = sentence_endings.split(text)
+
+    return [
+        s.strip()
+        for s in sentences
+        if s and s.strip()
+    ]
+
 def is_valid_sentence(doc, text: str) -> bool:
     words = text.split()
     if len(words) < 8 or len(words) > 50:
