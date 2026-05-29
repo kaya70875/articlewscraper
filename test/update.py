@@ -27,6 +27,7 @@ def update(batch_size=1000):
         runner.crawl(scienceSpider.CrawlLiveScience)
         runner.crawl(scienceSpider.CrawlScienceNews)
         runner.crawl(psySpider.CrawlNeuroSc)
+        runner.crawl(psySpider.CrawlPsyh)
         runner.crawl(spider.WikipediaSpider)
         runner.crawl(spider.WikiHowSpider)
 
