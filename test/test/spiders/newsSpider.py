@@ -2,9 +2,10 @@ import scrapy
 import json
 import logging
 from config import config
-import datetime
+from .base import BaseArticleSpider
+from scripts.helpers import is_valid_sentence
 
-class BBCNews(scrapy.Spider):
+class BBCNews(BaseArticleSpider):
     name = 'crawlbbcNews'
     start_urls = [
         'https://web-cdn.api.bbci.co.uk/xd/content-collection/b08a1d2f-6911-4738-825a-767895b8bfc4?country=tr&page=0&size=9',
@@ -15,6 +16,9 @@ class BBCNews(scrapy.Spider):
     custom_settings = {
         'ROBOTSTXT_OBEY': False,
     }
+
+    article_selector = 'p'
+    category = "news"
 
     try:
 
@@ -47,18 +51,6 @@ class BBCNews(scrapy.Spider):
                 yield scrapy.Request(next_page_url, callback=self.parse, meta={'page': next_page, 'base_url': base_url})
 
         def parse_article(self, response):
-            body = response.css('p::text').getall()
-            if not body:
-                logging.error(f'No text found in article: {response.url}')
-                return
-
-            for text in body:
-                yield {
-                    'text': text,
-                    'source': response.url,
-                    'category': 'news',
-                    'length': len(text),
-                    'date': datetime.datetime.now().strftime('%Y-%m-%d')
-                }
+            yield from self.extract_article_sentences(response)
     except TypeError as type_err:
         logging.error(f'TypeError in newsSpider: {type_err}')
