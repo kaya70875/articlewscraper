@@ -8,30 +8,30 @@ from scripts.helpers import is_valid_sentence
 logger = logging.getLogger(__name__)
 nlp = spacy.load("en_core_web_sm")
 
+
 class TheGuardian(scrapy.Spider):
     name = "crawlGuardian"
     allowed_domains = ["theguardian.com"]
     categories = {
         "news": [
             "world",
-            "uk/environment",
-            "uk/technology",
-            "uk/business",
+            "environment",
+            "technology",
+            "business",
         ],
         "sport": [
             "football",
-            "sport/tennis",
-            "sport/formulaone",
-            "sport/golf",
+            #"sport/tennis",
+            #"sport/formulaone",
+            #"sport/golf",
         ],
         "lifestyle": [
             "fashion",
             "food",
-            "tone/recipes",
-            "lifeandstyle/health-and-wellbeing",
-            "uk/travel",
-            "lifeandstyle/family",
-            "uk/money",
+            "travel",
+            "money"
+            #"lifeandstyle/health-and-wellbeing",
+            #"lifeandstyle/family",
         ],
     }
     custom_settings = {
@@ -40,18 +40,36 @@ class TheGuardian(scrapy.Spider):
     page_limit = config.GUARDIAN_PAGE
     article_selector = ".article-body-commercial-selector p"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Tracks { parent_category: { subcategory: article_count } }
+        self.article_counts = {
+            parent: {sub: 0 for sub in subs}
+            for parent, subs in self.categories.items()
+        }
+
     def start_requests(self):
-        # Iterate over subcategories so URLs are e.g. /world/all, /books/all
-        # Carry the parent category (news/culture/sport/lifestyle) in meta
+        total_subcategories = sum(len(v) for v in self.categories.values())
+        logger.info(
+            "Starting crawl: %d parent categories, %d subcategories, page limit %d",
+            len(self.categories),
+            total_subcategories,
+            self.page_limit,
+        )
         for parent_category, subcategories in self.categories.items():
             for subcategory in subcategories:
+                logger.info(
+                    "Queuing subcategory [%s] under parent [%s]",
+                    subcategory,
+                    parent_category,
+                )
                 yield scrapy.Request(
-                    url=f"https://www.theguardian.com/{subcategory}/all?page=0",
+                    url=f"https://www.theguardian.com/{subcategory}/all?page=1",
                     callback=self.parse,
                     meta={
                         "parent_category": parent_category,
                         "subcategory": subcategory,
-                        "page": 0,
+                        "page": 1,
                     },
                 )
 
@@ -59,15 +77,27 @@ class TheGuardian(scrapy.Spider):
         parent_category = response.meta["parent_category"]
         subcategory = response.meta["subcategory"]
         page = response.meta["page"]
-        logger.info("Parsing %s/%s page %s", parent_category, subcategory, page)
 
-        # Match links under the subcategory path (e.g. /world/...)
         article_links = response.css(
             f'main a[href^="/{subcategory}/"]:not([href*="?page="])::attr(href)'
         ).getall()
 
         if not article_links:
-            logger.warning("No article links found on %s", response.url)
+            logger.warning(
+                "[%s/%s] Page %d — no article links found (url: %s)",
+                parent_category,
+                subcategory,
+                page,
+                response.url,
+            )
+        else:
+            logger.info(
+                "[%s/%s] Page %d — found %d article links",
+                parent_category,
+                subcategory,
+                page,
+                len(article_links),
+            )
 
         for link in article_links:
             yield response.follow(
@@ -75,15 +105,14 @@ class TheGuardian(scrapy.Spider):
                 callback=self.parse_article,
                 meta={
                     "parent_category": parent_category,
+                    "subcategory": subcategory,
                 },
             )
 
         next_page = page + 1
-        print("next page: " + str(next_page))
-
         if next_page >= self.page_limit:
             logger.info(
-                "%s/%s reached page limit (%s)",
+                "[%s/%s] Reached page limit (%d), stopping.",
                 parent_category,
                 subcategory,
                 self.page_limit,
@@ -101,8 +130,8 @@ class TheGuardian(scrapy.Spider):
         )
 
     def parse_article(self, response):
-        # Resolve the correct parent category from meta instead of self.category
         parent_category = response.meta["parent_category"]
+        subcategory = response.meta["subcategory"]
 
         paragraphs = response.css(self.article_selector)
         valid_sentences = []
@@ -118,10 +147,24 @@ class TheGuardian(scrapy.Spider):
                     valid_sentences.append(sentence_text)
 
         if not valid_sentences:
+            logger.warning(
+                "[%s/%s] No valid sentences extracted from %s",
+                parent_category,
+                subcategory,
+                response.url,
+            )
             return
 
-        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        logger.info(
+            "[%s/%s] Scraped %d sentences from %s",
+            parent_category,
+            subcategory,
+            len(valid_sentences),
+            response.url,
+        )
+        self.article_counts[parent_category][subcategory] += 1
 
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
         for i, text in enumerate(valid_sentences):
             yield {
                 "text": text,
@@ -134,3 +177,24 @@ class TheGuardian(scrapy.Spider):
                 "length": len(text.split()),
                 "date": today,
             }
+
+    def closed(self, reason):
+        logger.info("Spider closed: %s", reason)
+        logger.info("===== Crawl Summary =====")
+        for parent_category, subcategories in self.article_counts.items():
+            total = sum(subcategories.values())
+            logger.info(
+                "[%s] total articles: %d",
+                parent_category,
+                total,
+            )
+            for subcategory, count in subcategories.items():
+                if count == 0:
+                    logger.warning(
+                        "  [%s/%s] 0 articles fetched — check URL or selector",
+                        parent_category,
+                        subcategory,
+                    )
+                else:
+                    logger.info("  [%s/%s] %d articles", parent_category, subcategory, count)
+        logger.info("=========================")
