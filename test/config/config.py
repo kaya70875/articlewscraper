@@ -10,3 +10,4 @@ LIVESC_PAGE = config['DEFAULT'].getint('LIVESC_PAGE') # livescience.com / be car
 SCIENCENEWS_PAGE = config['DEFAULT'].getint('SCIENCENEWS_PAGE') #sciencenews.com / this one may require high number.
 NEUROSCIENCE_PAGE = config['DEFAULT'].getint('NEUROSCIENCE_PAGE') #neuroscience.com
 WIKIHOW_PAGE = config['DEFAULT'].getint('WIKIHOW_PAGE') #wikihow.com
+GUARDIAN_PAGE = config['DEFAULT'].getint('GUARDIAN_PAGE') #theguardian.com
