@@ -1,6 +1,7 @@
-from test.spiders import scienceSpider, newsSpider, psySpider
+from test.spiders import scienceSpider, newsSpider, psySpider, guardianSpider
 from test.spiders.encyclopedias import spider
 from scrapy.utils.project import get_project_settings
+from scrapy.utils.log import configure_logging
 from scrapy.crawler import CrawlerRunner
 import logging
 from colorama import Fore, Style, init
@@ -8,7 +9,8 @@ import time
 from config.config import *
 import argparse
 
-logging.getLogger('scrapy').propagate = False
+#logging.getLogger('scrapy').propagate = False
+configure_logging({"LOG_LEVEL": "INFO"})
 init()
 
 def update(batch_size=1000):
@@ -19,17 +21,19 @@ def update(batch_size=1000):
 
         settings = get_project_settings()
         settings.set('BATCH_SIZE', batch_size)
-        settings.set('CONCURRENT_REQUESTS' , 16)
-        settings.set('DOWNLOAD_DELAY' , 0.1)
+        settings.set('CONCURRENT_REQUESTS' , 12)
+        settings.set('DOWNLOAD_DELAY' , 0.8)
+        settings.set("LOG_LEVEL", "INFO")
         runner = CrawlerRunner(settings)
 
-        runner.crawl(newsSpider.BBCNews)
-        runner.crawl(scienceSpider.CrawlLiveScience)
-        runner.crawl(scienceSpider.CrawlScienceNews)
-        runner.crawl(psySpider.CrawlNeuroSc)
-        runner.crawl(psySpider.CrawlPsyh)
-        runner.crawl(spider.WikipediaSpider)
-        runner.crawl(spider.WikiHowSpider)
+        runner.crawl(guardianSpider.TheGuardian)
+        #runner.crawl(newsSpider.BBCNews)
+        #runner.crawl(scienceSpider.CrawlLiveScience)
+        #runner.crawl(scienceSpider.CrawlScienceNews)
+        #runner.crawl(psySpider.CrawlNeuroSc)
+        #runner.crawl(psySpider.CrawlPsyh)
+        #runner.crawl(spider.WikipediaSpider)
+        #runner.crawl(spider.WikiHowSpider)
 
         d = runner.join()
 
